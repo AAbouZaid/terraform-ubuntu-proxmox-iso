@@ -54,6 +54,8 @@ m4 \
 	-D __PASSWORD__="$PASSWORD" \
 	-D __NIC_NAME__="$NIC_NAME" \
 	-D __POWER_OFF__="$POWER_OFF" \
+	-D __SALT_MASTER__="$SALT_MASTER" \
+	-D __SALT_ENV__="$SALT_ENV" \
 	"unattended.seed.m4" > "$COPY/preseed/unattended.seed"
 m4 \
 	-D __USERNAME__="$USERNAME" \

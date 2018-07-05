@@ -22,6 +22,10 @@
 : ${NIC_NAME:="eth1"}
 : ${POWER_OFF:="true"}
 
+# Salt provision.
+: ${SALT_MASTER:="saltmaster"}
+: ${SALT_ENV:="dev"}
+
 # SSH key to be authorized in virtual machines.
 : ${PRIVATE_KEY:="terraform"}
 

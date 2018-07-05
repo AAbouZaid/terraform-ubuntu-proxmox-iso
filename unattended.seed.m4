@@ -60,4 +60,10 @@ d-i preseed/late_command string \
     sh /cdrom/late_command.sh; \
     echo 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"' >> /target/etc/default/grub; \
     in-target update-grub; \
-    sed -i 's/__NIC_NAME__/eth0/g' /target/etc/network/interfaces
+    sed -i 's/__NIC_NAME__/eth0/g' /target/etc/network/interfaces; \
+    in-target apt-get -y salt-minion; \
+    cp /target/etc/hostname /target/etc/salt/minion_id; \
+    echo "master: __SALT_MASTER__" >> /target/etc/salt/minion; \
+    echo "environment: __SALT_ENV__" >> /target/etc/salt/minion; \
+    echo "pillarenv: __SALT_ENV__" >> /target/etc/salt/minion; \
+    in-target service salt-minion restart
