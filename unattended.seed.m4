@@ -61,7 +61,8 @@ d-i preseed/late_command string \
     echo 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"' >> /target/etc/default/grub; \
     in-target update-grub; \
     sed -i 's/__NIC_NAME__/eth0/g' /target/etc/network/interfaces; \
-    in-target apt-get -y salt-minion; \
+    echo -e "auto eth1\niface eth1 inet dhcp" > /target/etc/network/interfaces.d/eth1; \
+    apt-install salt-minion; \
     cp /target/etc/hostname /target/etc/salt/minion_id; \
     echo "master: __SALT_MASTER__" >> /target/etc/salt/minion; \
     echo "environment: __SALT_ENV__" >> /target/etc/salt/minion; \
