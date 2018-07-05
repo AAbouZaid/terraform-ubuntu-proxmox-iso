@@ -20,6 +20,7 @@
 
 # Misc.
 : ${NIC_NAME:="eth1"}
+: ${POWER_OFF:="true"}
 
 # SSH key to be authorized in virtual machines.
 : ${PRIVATE_KEY:="terraform"}

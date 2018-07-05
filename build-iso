@@ -53,6 +53,7 @@ m4 \
 	-D __USERNAME__="$USERNAME" \
 	-D __PASSWORD__="$PASSWORD" \
 	-D __NIC_NAME__="$NIC_NAME" \
+	-D __POWER_OFF__="$POWER_OFF" \
 	"unattended.seed.m4" > "$COPY/preseed/unattended.seed"
 m4 \
 	-D __USERNAME__="$USERNAME" \
