@@ -18,6 +18,9 @@
 : ${USERNAME:="terraform"}
 : ${PASSWORD:=`openssl rand -base64 24`}
 
+# Misc.
+: ${NIC_NAME:="eth1"}
+
 # SSH key to be authorized in virtual machines.
 : ${PRIVATE_KEY:="terraform"}
 

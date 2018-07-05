@@ -1,9 +1,10 @@
 # Preseed Ubuntu for Vagrant.
 
 # Network.
-d-i netcfg/choose_interface select eth1
+d-i netcfg/choose_interface select __NIC_NAME__
 d-i netcfg/get_hostname string __HOST__
 d-i netcfg/get_domain string __DOMAIN__
+d-i netcfg/no_default_route boolean true
 d-i netcfg/wireless_wep string
 
 # Clock.
@@ -55,4 +56,8 @@ d-i debian-installer/splash boolean false
 d-i debian-installer/exit/poweroff boolean true
 
 # Everything else.
-d-i preseed/late_command string sh /cdrom/late_command.sh
+d-i preseed/late_command string \
+    sh /cdrom/late_command.sh; \
+    echo 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"' >> /target/etc/default/grub; \
+    in-target update-grub; \
+    sed -i 's/__NIC_NAME__/eth0/g' /target/etc/network/interfaces
