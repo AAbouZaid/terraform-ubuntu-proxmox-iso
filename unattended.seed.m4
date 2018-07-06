@@ -41,7 +41,7 @@ d-i user-setup/allow-password-weak boolean true
 d-i user-setup/encrypt-home boolean false
 
 # Packages and repositories.
-d-i mirror/http/proxy string
+d-i mirror/http/proxy string __HTTP_PROXY__
 tasksel tasksel/first multiselect
 d-i pkgsel/include string curl openssh-server
 d-i pkgsel/update-policy select none
@@ -58,13 +58,5 @@ d-i debian-installer/exit/poweroff boolean __POWER_OFF__
 # Everything else.
 d-i preseed/late_command string \
     sh /cdrom/late_command.sh; \
-    echo 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"' >> /target/etc/default/grub; \
-    in-target update-grub; \
-    sed -i 's/__NIC_NAME__/eth0/g' /target/etc/network/interfaces; \
-    echo -e "auto eth1\niface eth1 inet dhcp" > /target/etc/network/interfaces.d/eth1; \
-    apt-install salt-minion; \
-    cp /target/etc/hostname /target/etc/salt/minion_id; \
-    echo "master: __SALT_MASTER__" >> /target/etc/salt/minion; \
-    echo "environment: __SALT_ENV__" >> /target/etc/salt/minion; \
-    echo "pillarenv: __SALT_ENV__" >> /target/etc/salt/minion; \
-    in-target service salt-minion restart
+    cp /cdrom/bootstrap.sh /target/root/bootstrap.sh; \
+    in-target bash -vfx /root/bootstrap.sh

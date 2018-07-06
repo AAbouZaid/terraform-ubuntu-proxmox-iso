@@ -20,9 +20,11 @@
 
 # Misc.
 : ${NIC_NAME:="eth1"}
+: ${HTTP_PROXY:=""}
 : ${POWER_OFF:="true"}
 
 # Salt provision.
+: ${SALT_VERSION:="latest"}
 : ${SALT_MASTER:="saltmaster"}
 : ${SALT_ENV:="dev"}
 

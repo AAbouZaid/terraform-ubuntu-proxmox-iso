@@ -53,9 +53,8 @@ m4 \
 	-D __USERNAME__="$USERNAME" \
 	-D __PASSWORD__="$PASSWORD" \
 	-D __NIC_NAME__="$NIC_NAME" \
+	-D __HTTP_PROXY__="$HTTP_PROXY" \
 	-D __POWER_OFF__="$POWER_OFF" \
-	-D __SALT_MASTER__="$SALT_MASTER" \
-	-D __SALT_ENV__="$SALT_ENV" \
 	"unattended.seed.m4" > "$COPY/preseed/unattended.seed"
 m4 \
 	-D __USERNAME__="$USERNAME" \
@@ -65,6 +64,13 @@ m4 \
 	-D __USERNAME__="$USERNAME" \
 	-D __PUBLIC_KEY__="$PUBLIC_KEY" \
 	"late_command.sh.m4" > "$COPY/late_command.sh"
+m4 \
+    -D __HTTP_PROXY__="$HTTP_PROXY" \
+    -D __NIC_NAME__="$NIC_NAME" \
+    -D __SALT_ENV__="$SALT_ENV" \
+    -D __SALT_MASTER__="$SALT_MASTER" \
+    -D __SALT_VERSION__="$SALT_VERSION" \
+	"bootstrap/init.sh.m4" > "$COPY/bootstrap.sh"
 
 echo Building a custom ISO
 # Build a custom ISO.
