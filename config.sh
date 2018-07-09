@@ -28,16 +28,6 @@
 : ${SALT_MASTER:="saltmaster"}
 : ${SALT_ENV:="dev"}
 
-# SSH key to be authorized in virtual machines.
-: ${PRIVATE_KEY:="terraform"}
-
-if [ ! -f "$PRIVATE_KEY" ]; then
-	ssh-keygen -t rsa -b 4096 -N "" -C "$USERNAME@$DOMAIN" -f "$PRIVATE_KEY"
-fi
-
-chmod 600 "$PRIVATE_KEY"
-: ${PUBLIC_KEY:="terraform.pub"}
-
 # Building info.
 : ${PARENT_DIR:="work"}
 : ${MOUNT_DIR:="$PARENT_DIR/mount"}

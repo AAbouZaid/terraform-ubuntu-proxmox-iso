@@ -55,10 +55,9 @@ m4 \
 m4 \
     -D __USERNAME__="$USERNAME" \
     "bootstrap/sudoers.m4" > "$WORKING_DIR/sudoers"
-cp "$PUBLIC_KEY" "bootstrap/auto_resize_vda.sh" "$WORKING_DIR/"
+cp "bootstrap/auto_resize_vda.sh" "$WORKING_DIR/"
 m4 \
     -D __USERNAME__="$USERNAME" \
-    -D __PUBLIC_KEY__="$PUBLIC_KEY" \
     "bootstrap/late_command.sh.m4" > "$WORKING_DIR/late_command.sh"
 m4 \
     -D __HTTP_PROXY__="$HTTP_PROXY" \
