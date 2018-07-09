@@ -55,15 +55,15 @@ m4 \
 	-D __NIC_NAME__="$NIC_NAME" \
 	-D __HTTP_PROXY__="$HTTP_PROXY" \
 	-D __POWER_OFF__="$POWER_OFF" \
-	"unattended.seed.m4" > "$COPY/preseed/unattended.seed"
+	"bootstrap/unattended.seed.m4" > "$COPY/preseed/unattended.seed"
 m4 \
 	-D __USERNAME__="$USERNAME" \
-	sudoers.m4 > "$COPY/sudoers"
-cp "$PUBLIC_KEY" "auto_resize_vda.sh" "$COPY/"
+	"bootstrap/sudoers.m4" > "$COPY/sudoers"
+cp "$PUBLIC_KEY" "bootstrap/auto_resize_vda.sh" "$COPY/"
 m4 \
 	-D __USERNAME__="$USERNAME" \
 	-D __PUBLIC_KEY__="$PUBLIC_KEY" \
-	"late_command.sh.m4" > "$COPY/late_command.sh"
+	"bootstrap/late_command.sh.m4" > "$COPY/late_command.sh"
 m4 \
     -D __HTTP_PROXY__="$HTTP_PROXY" \
     -D __NIC_NAME__="$NIC_NAME" \
