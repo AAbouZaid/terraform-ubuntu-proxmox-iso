@@ -4,81 +4,77 @@ set -e
 
 . "$(dirname "$0")/config.sh"
 
-ORIG="work/ubuntu-$VERSION-$DISTRO-$ARCH.iso"
-COPY="work/ubuntu-$VERSION-$DISTRO-$ARCH"
-ISO="work/$NICKNAME-ubuntu-$VERSION-$DISTRO-$ARCH.iso"
-MOUNT="work/mount"
 PLATFORM=$(uname)
 
 # Download the original ISO if it isn't present already.
-[ -f "$ORIG" ] || curl -L -o "$ORIG" \
-	"http://releases.ubuntu.com/$VERSION/ubuntu-$VERSION-$DISTRO-$ARCH.iso"
+[ -f "$SRC_ISO" ] || curl -L -o "$SRC_ISO" \
+    "http://releases.ubuntu.com/$VERSION/ubuntu-$VERSION-$DISTRO-$ARCH.iso"
 
-rm -rf "$MOUNT"
-mkdir "$MOUNT"
+rm -rf "$MOUNT_DIR"
+mkdir "$MOUNT_DIR"
 
 echo Mounting ISO
 # Make a writable copy of the original ISO.
 if [ "$PLATFORM" = "Darwin" ]; then
-	# os x
-	DEVNODE=$(sudo hdiutil attach -nomount "$ORIG" | head -1 | awk "{print \$1}")
-	sudo mount -t cd9660 "$DEVNODE" "$MOUNT"
+    # os x
+    DEVNODE=$(sudo hdiutil attach -nomount "$SRC_ISO" | head -1 | awk "{print \$1}")
+    sudo mount -t cd9660 "$DEVNODE" "$MOUNT_DIR"
 else
-	# linux
-	sudo mount -o loop "$ORIG" "$MOUNT"
+    # linux
+    sudo mount -o loop "$SRC_ISO" "$MOUNT_DIR"
 fi
 
 echo Syncing files from ISO
-rsync -a "$MOUNT/" "$COPY"
+rsync -a "$MOUNT_DIR/" "$WORKING_DIR"
 
 echo Unmounting ISO
-sudo umount "$MOUNT"
+sudo umount "$MOUNT_DIR"
 if [ "$PLATFORM" = "Darwin" ]; then
-	sudo hdiutil eject "$DEVNODE"
+    sudo hdiutil eject "$DEVNODE"
 fi
-rm -rf "$MOUNT"
-chmod -R +w "$COPY"
+rm -rf "$MOUNT_DIR"
+chmod -R +w "$WORKING_DIR"
 
 echo Injecting custom configs
 # Customize the writable copy.
-cp "isolinux.cfg" "$COPY/isolinux/"
+cp "isolinux.cfg" "$WORKING_DIR/isolinux/"
 m4 \
-	-D __HOST__="$HOST" \
-	-D __DOMAIN__="$DOMAIN" \
-	-D __KERNEL__="linux-$([ "$ARCH" = "i386" ] \
-		&& echo generic-pae \
-		|| echo server
-	)" \
-	-D __ROOT_PASSWORD__="$ROOT_PASSWORD" \
-	-D __USERNAME__="$USERNAME" \
-	-D __PASSWORD__="$PASSWORD" \
-	-D __NIC_NAME__="$NIC_NAME" \
-	-D __HTTP_PROXY__="$HTTP_PROXY" \
-	-D __POWER_OFF__="$POWER_OFF" \
-	"bootstrap/unattended.seed.m4" > "$COPY/preseed/unattended.seed"
+    -D __HOST__="$HOST" \
+    -D __DOMAIN__="$DOMAIN" \
+    -D __KERNEL__="linux-$([ "$ARCH" = "i386" ] \
+        && echo generic-pae \
+        || echo server
+    )" \
+    -D __ROOT_PASSWORD__="$ROOT_PASSWORD" \
+    -D __USERNAME__="$USERNAME" \
+    -D __PASSWORD__="$PASSWORD" \
+    -D __NIC_NAME__="$NIC_NAME" \
+    -D __HTTP_PROXY__="$HTTP_PROXY" \
+    -D __POWER_OFF__="$POWER_OFF" \
+    "bootstrap/unattended.seed.m4" > "$WORKING_DIR/preseed/unattended.seed"
 m4 \
-	-D __USERNAME__="$USERNAME" \
-	"bootstrap/sudoers.m4" > "$COPY/sudoers"
-cp "$PUBLIC_KEY" "bootstrap/auto_resize_vda.sh" "$COPY/"
+    -D __USERNAME__="$USERNAME" \
+    "bootstrap/sudoers.m4" > "$WORKING_DIR/sudoers"
+cp "$PUBLIC_KEY" "bootstrap/auto_resize_vda.sh" "$WORKING_DIR/"
 m4 \
-	-D __USERNAME__="$USERNAME" \
-	-D __PUBLIC_KEY__="$PUBLIC_KEY" \
-	"bootstrap/late_command.sh.m4" > "$COPY/late_command.sh"
+    -D __USERNAME__="$USERNAME" \
+    -D __PUBLIC_KEY__="$PUBLIC_KEY" \
+    "bootstrap/late_command.sh.m4" > "$WORKING_DIR/late_command.sh"
 m4 \
     -D __HTTP_PROXY__="$HTTP_PROXY" \
     -D __NIC_NAME__="$NIC_NAME" \
     -D __SALT_ENV__="$SALT_ENV" \
     -D __SALT_MASTER__="$SALT_MASTER" \
     -D __SALT_VERSION__="$SALT_VERSION" \
-	"bootstrap/init.sh.m4" > "$COPY/bootstrap.sh"
+    "bootstrap/init.sh.m4" > "$WORKING_DIR/bootstrap.sh"
 
 echo Building a custom ISO
 # Build a custom ISO.
 mkisofs -r -V "Ubuntu $VERSION for Terraform" \
-	-cache-inodes -J -l -no-emul-boot \
-	-b isolinux/isolinux.bin \
-	-c isolinux/boot.cat \
-	-boot-load-size 4 -boot-info-table \
-	-o "$ISO" "$COPY"
+    -cache-inodes -J -l -no-emul-boot \
+    -b isolinux/isolinux.bin \
+    -c isolinux/boot.cat \
+    -boot-load-size 4 -boot-info-table \
+    -o "$DST_ISO" "$WORKING_DIR"
 
-echo Built "$ISO"
+echo Built "$DST_ISO"

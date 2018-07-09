@@ -37,3 +37,10 @@ fi
 
 chmod 600 "$PRIVATE_KEY"
 : ${PUBLIC_KEY:="terraform.pub"}
+
+# Building info.
+: ${PARENT_DIR:="work"}
+: ${MOUNT_DIR:="$PARENT_DIR/mount"}
+: ${WORKING_DIR:="$PARENT_DIR/ubuntu-$VERSION-$DISTRO-$ARCH"}
+: ${SRC_ISO:="$PARENT_DIR/ubuntu-$VERSION-$DISTRO-$ARCH.iso"}
+: ${DST_ISO:="$PARENT_DIR/$NICKNAME-ubuntu-$VERSION-$DISTRO-$ARCH.iso"}
